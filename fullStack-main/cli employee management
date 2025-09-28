@@ -1,0 +1,104 @@
+// Import the readline module to handle command-line input/output
+const readline = require('readline');
+
+// Create an interface for reading from the console (stdin) and writing to it (stdout)
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+// Use an array to store employee data in memory.
+let employees = [];
+let nextId = 1; // Simple ID counter
+
+/**
+ * Displays the main menu options to the user.
+ */
+function showMenu() {
+  console.log('\n--- Employee Management System ---');
+  console.log('1. Add a new employee');
+  console.log('2. List all employees');
+  console.log('3. Remove an employee');
+  console.log('4. Exit');
+  rl.question('Please choose an option (1-4): ', handleMenuChoice);
+}
+
+/**
+ * Handles the user's menu selection.
+ * @param {string} choice - The option selected by the user.
+ */
+function handleMenuChoice(choice) {
+  switch (choice.trim()) {
+    case '1':
+      addEmployee();
+      break;
+    case '2':
+      listEmployees();
+      break;
+    case '3':
+      removeEmployee();
+      break;
+    case '4':
+      console.log('Exiting the application. Goodbye! 👋');
+      rl.close(); // Closes the readline interface and exits the program
+      break;
+    default:
+      console.log('Invalid choice. Please enter a number between 1 and 4.');
+      showMenu(); // Show the menu again
+      break;
+  }
+}
+
+/**
+ * Prompts the user for a new employee's name and adds them to the array.
+ */
+function addEmployee() {
+  rl.question("Enter the employee's name: ", (name) => {
+    const newEmployee = {
+      id: nextId++,
+      name: name,
+    };
+    employees.push(newEmployee);
+    console.log(`✅ Employee "${name}" with ID ${newEmployee.id} added successfully.`);
+    showMenu(); // Return to the main menu
+  });
+}
+
+/**
+ * Displays all employees currently stored in the array.
+ */
+function listEmployees() {
+  console.log('\n--- List of Employees ---');
+  if (employees.length === 0) {
+    console.log('No employees found.');
+  } else {
+    employees.forEach((employee) => {
+      console.log(`ID: ${employee.id}, Name: ${employee.name}`);
+    });
+  }
+  showMenu(); // Return to the main menu
+}
+
+/**
+ * Prompts the user for an employee ID and removes the corresponding employee.
+ */
+function removeEmployee() {
+  rl.question('Enter the ID of the employee to remove: ', (idStr) => {
+    const id = parseInt(idStr, 10);
+    const initialLength = employees.length;
+
+    // Use Array.prototype.filter() to create a new array without the target employee
+    employees = employees.filter((employee) => employee.id !== id);
+
+    if (employees.length === initialLength) {
+      console.log(`❌ No employee found with ID ${id}.`);
+    } else {
+      console.log(`✅ Employee with ID ${id} has been removed.`);
+    }
+    showMenu(); // Return to the main menu
+  });
+}
+
+// Start the application by showing the menu for the first time
+console.log('Welcome to the CLI Employee Management System! 🧑‍💻');
+showMenu();
